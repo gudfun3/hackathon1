@@ -1,152 +1,206 @@
-🚀 Phase 2: Enhanced Governance, Finance, and Outreach
-✅ Features to Implement
-1. Digital Governance Tools
-🗳️ Meeting Scheduling and Minutes
+📌 Digital Saving Group (DSG) Platform – Milestone Summary & Implementation
+The Digital Saving Group platform enables self-help groups (SHGs) to manage savings, loans, governance, and SDG impact with transparency and security. Below is a breakdown of each milestone, its scope, and how we've implemented it using Spring Boot (Backend) and Next.js + ShadCN (Frontend).
 
-Schedule SHG meetings
+✅ Phase 1 – Core Group & Member Operations
+1️⃣ Group Management
+Feature: Create and manage multiple SHG groups.
 
-Record attendance and decisions
+Implementation:
 
-Attach digital signatures (if needed)
+Entity: Group
 
-🧾 Polls and Voting
+REST API: GroupController
 
-Members can vote on loan approvals, fund usage, etc.
+Role-based access for Admins.
 
-Role-based voting rights (President/Treasurer priority votes)
+PWA UI: Group list, creation form.
 
-2. Advanced Finance Module
-💹 Recurring Saving Plans
+2️⃣ Member Onboarding
+Feature: Members belong to a group, have roles (MEMBER, PRESIDENT, TREASURER).
 
-Auto-reminders for monthly/weekly savings
+Implementation:
 
-Target savings goals per member/group
+Entities: Member, MemberUser
 
-💸 Loan EMI Scheduler
+REST APIs: MemberController, UserService
 
-Define custom repayment schedules (weekly, monthly)
+Role: Assigned on creation.
 
-Generate auto reminders for due EMIs
+UI: Member form, group-specific onboarding.
 
-📊 Financial Analytics
+3️⃣ Savings & Deposits
+Feature: Track individual member deposits.
 
-Charts: group savings vs loans, repayment trends
+Implementation:
 
-Summary cards: average member savings, overdue loans, active loans
+Entity: SavingDeposit
 
-3. Integration & Outreach
-💳 UPI Integration (via Razorpay, Paytm, PhonePe)
+Services: SavingDepositService, SavingSummaryService
 
-Members can deposit savings or repay loans using UPI
+UI: DepositForm, DepositHistory
 
-📱 SMS & WhatsApp Alerts
+Export: CSV & PDF options.
 
-Loan disbursed
+4️⃣ Loan Application & Repayment
+Feature: Members apply for loans. President approves, Treasurer disburses. Repayments update group fund.
 
-Savings received
+Implementation:
 
-Repayment reminders
+Entity: LoanApplication
 
-🌐 NGO/Partner Dashboard
+Status Enum: PENDING, APPROVED, DISBURSED, REPAID, REJECTED
 
-External NGOs or financial literacy trainers can monitor impact
+Services: LoanApplicationService, LoanRepaymentService
 
-Group/project tagging
+Fund update on repayment via GroupFundService
 
-4. Training & Impact Measurement
-📚 Training Module
+UI:
 
-Track member training progress
+ApplyLoanForm
 
-Attach digital certificates
+LoanApprovalTable
 
-🏆 SDG Impact Tracker
+RepaymentForm
 
-Map group activities to UN SDG goals (e.g., SDG 1, 5, 8)
+Status-based view logic
 
-Report on impact metrics (savings uplift, female inclusion, education level)
+Overdue logic, interest, and late fee added.
 
-5. Security & Access Control
-🛡️ RBAC Improvements
+5️⃣ Profit & Loss Tracking
+Feature: Update group’s net profit/loss via loan repayments.
 
-Fine-grained access control (who can view, vote, manage funds)
+Implementation:
 
-🔐 Two-Factor Authentication (2FA)
+Entity: ProfitLossRecord
 
-Via email or OTP (optional)
+Fund tracked per group via GroupFund
 
+✅ Phase 2 – Governance & Accountability
+6️⃣ Group Meetings & Attendance
+Feature: Schedule meetings, track attendance.
 
-Feature	Tech Stack Suggestion
+Implementation:
 
-UPI & SMS	Razorpay/Paytm SDK, Twilio/Exotel
-Charts/Dashboards	Chart.js or Recharts (React Native)
-SDG Tagging & Analytics	PostgreSQL JSONB or tagging tables
-Attendance/Minutes Signing	PDF + SignaturePad.js + iText
-Role-based voting	Custom voting engine + Audit log table
+Entity: Meeting
 
+REST APIs: MeetingController
 
-governance/
-  ├── MeetingController
-  ├── MeetingService
-  ├── PollController
-  ├── AttendanceEntity
+UI: CreateMeetingForm, MeetingList
 
-finance/
-  ├── EmiSchedulerService
-  ├── TargetSavingsService
-  ├── UpiIntegrationService
+7️⃣ Polls and Decision-Making
+Feature: Create polls, vote, close polls (by PRESIDENT only).
 
-impact/
-  ├── SDGImpactTracker
-  ├── TrainingService
-  ├── PartnerDashboardController
+Implementation:
 
+Entity: Poll, PollOption, Vote
 
-  # Governance Module 
+Services: PollService, VoteService
 
-  src/main/java/com/yourapp/governance/
-├── controller/
-│   └── MeetingController.java
-│   └── PollController.java
-├── service/
-│   └── MeetingService.java
-│   └── PollService.java
-├── entity/
-│   └── Meeting.java
-│   └── Attendance.java
-│   └── Poll.java
-│   └── Vote.java
-├── repository/
-│   └── MeetingRepository.java
-│   └── AttendanceRepository.java
-│   └── PollRepository.java
-│   └── VoteRepository.java
+UI: Polls.tsx, results logic.
 
+Role-based UI using useRole() hook.
 
-# SDG Tracker 
+8️⃣ File Attachments & Digital Signatures (Optional)
+Feature: Attach files to meetings, digital proof.
 
+Implementation:
 
-SDG Tracker (Impact Monitoring)
-✅ Map group activities to UN SDG Goals (1, 5, 8, etc.)
+File upload endpoint
 
-✅ Track metrics like:
+Placeholder UI for attachment viewer
 
-Financial inclusion (Goal 1)
+Future: E-signature integration (e.g., Aadhaar eSign or custom signer)
 
-Female empowerment (Goal 5)
+✅ Phase 3 – SDG Integration
+9️⃣ SDG Goal Tagging
+Feature: Tag groups and transactions to SDGs (Sustainable Development Goals)
 
-Economic growth (Goal 8)
+Implementation:
 
-✅ Segment data per SHG group, project, or NGO
+Entity: SDGGoal, SDGImpactMapping
 
+UI: Tag goal on group creation.
 
+Impact tracking via batch jobs and summaries.
 
- ### Features:
-Tag each group or project with one or more UN SDG Goals
+🔟 Loan & Deposit Auto-SDG Mapping
+Feature: Loans and deposits auto-linked to SDG goals from DB.
 
-Track impact metrics: e.g., number of women empowered, jobs created, savings growth, etc.
+Implementation:
 
-Maintain history over time (monthly/yearly progress)
+SDGMappingService fetches from DB
 
-View SDG-aligned dashboards per group
+Tracks impact like WomenEmpowered, PovertyReduction, etc.
 
+Batch processor generates monthly reports per group.
+
+1️⃣1️⃣ Export & Reporting
+Feature: Export CSV/PDF for deposits, loans, repayments.
+
+Implementation:
+
+ExportService with IText 8 for PDF
+
+UI: Download buttons per module
+
+Admin can export all data
+
+Date range filter support
+
+✅ Cross-Cutting Features
+🔐 Role-Based Access
+ADMIN: Manage groups, users
+
+PRESIDENT: Approve loans, manage polls
+
+TREASURER: Disburse loans, view funds
+
+MEMBER: Apply loan, make deposit
+
+Implemented using:
+
+Backend: Spring Security + JWT
+
+Frontend: useRole() hook, protected UI buttons
+
+📱 Progressive Web App (PWA)
+Implemented with:
+
+next-pwa plugin
+
+manifest.json and offline support
+
+Installable on Android/iOS
+
+Responsive Glassmorphic UI with ShadCN components
+
+🧾 Track & Audit
+Audit trail for:
+
+Loan repayments
+
+Deposits
+
+Meeting logs
+
+processed flag added to async-safe LoanApplication and SavingDeposit
+
+Refactored long-running logic into event-based processors
+
+📈 What’s Next (Optional Phase 4 Ideas)
+Feature	Description
+Notifications	SMS/email/push for meetings, approvals
+Multi-language Support	Hindi, Tamil, Kannada, etc.
+NGO Dashboard	Central view of SHGs by NGO
+UPI Payments Integration	UPI-based deposit/repayment (via Razorpay/UPI)
+Aadhaar eKYC	Integrate identity verification (via DigiLocker API)
+
+📘 Documentation & Tech Stack
+Layer	Technology
+Backend	Spring Boot + PostgreSQL + JWT
+Frontend	Next.js 14 + ShadCN UI + TypeScript
+Auth	NextAuth / JWT
+PDF Export	iText 8
+CSV Export	OpenCSV / Custom writer
+PWA	next-pwa
+Hosting	GCP / Render / Vercel / GKE
